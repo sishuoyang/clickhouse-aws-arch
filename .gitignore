@@ -1,0 +1,8 @@
+node_modules
+dist
+out
+.tmp-frames
+*.local
+.DS_Store
+
+# Saved diagram layouts (layouts/*.json) are tracked so the arranged defaults ship with the repo.
