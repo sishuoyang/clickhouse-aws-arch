@@ -28,7 +28,15 @@ class Clock {
   }
   getProgress = (): number => this.progress
   private emitProgress() {
-    this.progressListeners.forEach((l) => l())
+    // Isolate subscribers: one bad listener must not stop the others (or, combined with the
+    // schedule-first tick below, kill the animation loop).
+    this.progressListeners.forEach((l) => {
+      try {
+        l()
+      } catch (e) {
+        console.error('clock progress listener error', e)
+      }
+    })
   }
 
   // --- meta: playing / speed (low-frequency, drives the controls UI) ---
@@ -39,7 +47,13 @@ class Clock {
   getPlaying = (): boolean => this.playing
   getSpeed = (): number => this.speed
   private emitMeta() {
-    this.metaListeners.forEach((l) => l())
+    this.metaListeners.forEach((l) => {
+      try {
+        l()
+      } catch (e) {
+        console.error('clock meta listener error', e)
+      }
+    })
   }
 
   setProgress(p: number) {
@@ -65,12 +79,15 @@ class Clock {
   }
 
   private tick = (ts: number) => {
+    // Schedule the next frame FIRST so the loop can never be killed by a transient error in
+    // setProgress / a subscriber render — that would freeze the animation permanently.
+    this.raf = requestAnimationFrame(this.tick)
     if (this.last) {
-      const dt = (ts - this.last) / 1000
+      // Clamp dt so a long pause (e.g. backgrounded tab) doesn't cause a huge jump on resume.
+      const dt = Math.min((ts - this.last) / 1000, 0.1)
       this.setProgress(this.progress + (dt * this.speed) / this.loopSeconds)
     }
     this.last = ts
-    this.raf = requestAnimationFrame(this.tick)
   }
 
   private run() {
