@@ -54,12 +54,22 @@ import codeinterpreter from './aws/codeinterpreter.svg?raw'
 import browser from './aws/browser.svg?raw'
 
 // ClickHouse-specific + crafted generic glyphs
-import clickpipes from './aws/clickpipes.svg?raw'
 import alerts from './aws/alerts.svg?raw'
 import apps from './aws/apps.svg?raw'
 import bi from './aws/bi.svg?raw'
 import sql from './aws/sql.svg?raw'
 import user from './aws/user.svg?raw'
+
+// Vendor-neutral / open-source tech
+import kafka from './aws/kafka.svg?raw'
+import postgres from './aws/postgres.svg?raw'
+import mysql from './aws/mysql.svg?raw'
+import mongodb from './aws/mongodb.svg?raw'
+import flinkoss from './aws/flinkoss.svg?raw'
+import objectstorage from './aws/objectstorage.svg?raw'
+import cdc from './aws/cdc.svg?raw'
+import llm from './aws/llm.svg?raw'
+import server from './aws/server.svg?raw'
 
 // Friendly glyphs for the non-technical "use cases" diagrams
 import people from './aws/people.svg?raw'
@@ -111,7 +121,8 @@ const raw = {
   guardrails,
   codeinterpreter,
   browser,
-  clickpipes,
+  // ClickPipes is a ClickHouse-managed service — render it with the ClickHouse logo.
+  clickpipes: clickhouse,
   alerts,
   apps,
   bi,
@@ -124,6 +135,15 @@ const raw = {
   globe,
   robot,
   docs,
+  kafka,
+  postgres,
+  mysql,
+  mongodb,
+  flinkoss,
+  objectstorage,
+  cdc,
+  llm,
+  server,
 } as const
 
 export type IconKey = keyof typeof raw

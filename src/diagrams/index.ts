@@ -4,6 +4,7 @@ import { warehouse } from './warehouse'
 import { observability } from './observability'
 import { mlgenai } from './mlgenai'
 import { ucRealtime, ucWarehouse, ucObservability, ucGenai } from './usecases'
+import { vnRealtime, vnWarehouse, vnObservability, vnGenai } from './vendorneutral'
 
 export type Collection = {
   id: string
@@ -20,8 +21,13 @@ export const collections: Collection[] = [
   },
   {
     id: 'architecture',
-    label: 'Architecture Diagrams',
+    label: 'Architecture Diagrams (AWS)',
     diagrams: [realtime, warehouse, observability, mlgenai],
+  },
+  {
+    id: 'vendor-neutral',
+    label: 'Architecture (Vendor-Neutral)',
+    diagrams: [vnRealtime, vnWarehouse, vnObservability, vnGenai],
   },
 ]
 

@@ -13,13 +13,21 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { ServiceNode } from './ServiceNode'
+import { LiveDashboardNode, StoreTeamNode, HealthDashboardNode, OnCallSRENode } from './LiveNodes'
 import { ParticleEdge } from './ParticleEdge'
 import { StageHeader, STAGE_WIDTH } from './StageHeader'
 import { theme } from '../theme'
 import { loadLayout, saveLayout, resetLayout, type EdgeOverrideMap } from '../layout'
 import type { DiagramDef } from '../diagrams/types'
 
-const nodeTypes = { service: ServiceNode, stage: StageHeader }
+const nodeTypes = {
+  service: ServiceNode,
+  stage: StageHeader,
+  dashboard: LiveDashboardNode,
+  team: StoreTeamNode,
+  healthdash: HealthDashboardNode,
+  oncall: OnCallSRENode,
+}
 const edgeTypes = { particle: ParticleEdge }
 
 const STAGE_HEADER_Y = -10
@@ -89,7 +97,8 @@ function FlowCanvas({
   const onSave = useCallback(() => {
     const positions: Record<string, { x: number; y: number }> = {}
     for (const n of nodesRef.current) {
-      if (n.type === 'service') {
+      // Persist every node except the stage (group) headers, which are derived, not user-placed.
+      if (n.type !== 'stage') {
         positions[n.id] = { x: Math.round(n.position.x), y: Math.round(n.position.y) }
       }
     }

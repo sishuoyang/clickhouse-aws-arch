@@ -41,7 +41,7 @@ export const observability: DiagramDef = {
     // Collection & Routing
     cnode('fluentbit', COL, 110, { label: 'Fluent Bit', sub: 'Log forwarder', category: 'ingest', icon: 'fluentbit' }),
     cnode('vector', COL, 250, { label: 'Vector', sub: 'Observability pipeline', category: 'ingest', icon: 'vector' }),
-    cnode('otel', COL, 440, { label: 'OpenTelemetry', sub: 'Collector', category: 'ingest', icon: 'otel' }),
+    cnode('otel', COL, 440, { label: 'OpenTelemetry', sub: 'Collector', category: 'ingest', icon: 'otel', badge: 'ClickStack', clickstack: true }),
     cnode('s3', COL, 770, { label: 'Amazon S3', sub: 'Log archive', category: 'ingest', icon: 's3' }),
 
     // Streaming Processing
@@ -51,14 +51,14 @@ export const observability: DiagramDef = {
 
     // Realtime Data Warehouse
     cnode('clickpipes', PIPES, 410, { label: 'ClickPipes', sub: 'Managed ingestion', category: 'clickhouse', icon: 'clickpipes' }),
-    cnode('clickhouse', CH, 395, { label: 'ClickHouse Cloud', sub: 'Logs · Metrics · Traces', category: 'clickhouse', icon: 'clickhouse', badge: 'ClickStack', hero: true }),
+    cnode('clickhouse', CH, 395, { label: 'ClickHouse Cloud', sub: 'Logs · Metrics · Traces', category: 'clickhouse', icon: 'clickhouse', badge: 'ClickStack', hero: true, clickstack: true }),
 
     // Visualization & Alerting
     cnode('managedgrafana', VIZ, 190, { label: 'Amazon Managed Grafana', sub: 'Dashboards', category: 'consume', icon: 'managedgrafana' }),
     cnode('sns', SNS, 190, { label: 'Amazon SNS', sub: 'Notifications', category: 'consume', icon: 'sns' }),
     cnode('quicksight', VIZ, 340, { label: 'Amazon QuickSight', sub: 'BI dashboards', category: 'consume', icon: 'quicksight' }),
     cnode('superset', VIZ, 490, { label: 'Apache Superset', sub: 'Exploration', category: 'consume', icon: 'superset' }),
-    cnode('hyperdx', VIZ, 640, { label: 'ClickStack (HyperDX)', sub: 'Unified observability', category: 'consume', icon: 'hyperdx' }),
+    cnode('hyperdx', VIZ, 640, { label: 'HyperDX', sub: 'Unified observability', category: 'consume', icon: 'hyperdx', badge: 'ClickStack', clickstack: true }),
   ],
   edges: [
     // Sources -> Collectors

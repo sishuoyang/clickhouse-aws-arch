@@ -13,8 +13,8 @@ export const ucRealtime: DiagramDef = {
     cnode('shoppers', 160, 330, { label: 'Online Shoppers', sub: 'Browsing & buying', category: 'source', icon: 'people' }),
     cnode('storeapp', 480, 330, { label: 'Store Website & App', sub: 'Every click & order', category: 'source', icon: 'cart' }),
     cnode('clickhouse', 820, 330, { label: 'ClickHouse', sub: 'Crunches every event instantly', category: 'clickhouse', icon: 'clickhouse', badge: 'Live', stats: ['Millions of rows/sec', 'Sub-second queries'], hero: true }),
-    cnode('dashboard', 1160, 200, { label: 'Live Dashboard', sub: 'Sales & visitors right now', category: 'consume', icon: 'dashboard' }),
-    cnode('team', 1160, 470, { label: 'Store Team', sub: 'Reacts in seconds', category: 'consume', icon: 'user' }),
+    cnode('dashboard', 1210, 110, { label: 'Live Dashboard', sub: 'Sales & visitors right now', category: 'consume', icon: 'dashboard' }, { type: 'dashboard', w: 300 }),
+    cnode('team', 1190, 470, { label: 'Store Team', sub: 'Reacting in real time', category: 'consume', icon: 'user' }, { type: 'team', w: 240 }),
   ],
   edges: [
     edge('shoppers', 'storeapp', { label: 'Browse & buy' }),
@@ -52,14 +52,15 @@ export const ucObservability: DiagramDef = {
   id: 'uc-observability',
   title: 'Observability',
   description:
-    'Apps and the website constantly report how they’re doing, and ClickHouse watches it all. An AI SRE agent monitors the data around the clock — automatically detecting and explaining problems, and raising alerts before customers notice.',
+    'Apps and the website constantly report how they’re doing, and ClickHouse watches it all. A human SRE keeps an eye on the live dashboard during working hours — and around the clock an AI SRE agent monitors the data, automatically detecting and explaining problems and paging a human the moment something breaks, even after hours.',
   nodes: [
     cnode('apps', 150, 250, { label: 'Apps & Services', sub: 'How they’re running', category: 'source', icon: 'apps' }),
     cnode('website', 150, 470, { label: 'Website', sub: 'Speed & errors', category: 'source', icon: 'globe' }),
     cnode('clickhouse', 540, 360, { label: 'ClickHouse', sub: 'Watches everything, all the time', category: 'clickhouse', icon: 'clickhouse', badge: 'Always on', stats: ['Billions of rows/sec', 'Sub-second search'], hero: true }),
-    cnode('dashboard', 920, 210, { label: 'Health Dashboard', sub: 'Everything at a glance', category: 'consume', icon: 'dashboard' }),
-    cnode('agent', 920, 480, { label: 'AI SRE Agent', sub: 'Detects & explains errors', category: 'agent', icon: 'robot' }),
-    cnode('alerts', 1270, 480, { label: 'Instant Alerts', sub: 'The team is notified', category: 'consume', icon: 'alerts' }),
+    cnode('dashboard', 940, 60, { label: 'Application Health', sub: 'Everything at a glance', category: 'consume', icon: 'dashboard' }, { type: 'healthdash', w: 340 }),
+    cnode('agent', 900, 480, { label: 'AI SRE Agent', sub: 'Detects & explains errors', category: 'agent', icon: 'robot' }),
+    cnode('alerts', 1280, 480, { label: 'Instant Alerts', sub: 'The team is notified', category: 'consume', icon: 'alerts' }),
+    cnode('sre', 1680, 300, { label: 'On-call SRE', sub: 'A human in the loop', category: 'consume', icon: 'user' }, { type: 'oncall', w: 238 }),
   ],
   edges: [
     edge('apps', 'clickhouse', { label: 'Health signals' }),
@@ -67,6 +68,9 @@ export const ucObservability: DiagramDef = {
     edge('clickhouse', 'dashboard', { label: 'See health' }),
     edge('clickhouse', 'agent', { color: '#B79CFF', label: 'Monitors 24/7' }),
     edge('agent', 'alerts', { color: '#FF7AB6', label: 'Flags & explains issues' }),
+    // The human watches the dashboard during the day, and is paged anytime via the alert.
+    edge('dashboard', 'sre', { color: '#74E0A8', label: 'Watches by day' }, { sourceHandle: 'r', targetHandle: 't' }),
+    edge('alerts', 'sre', { color: '#FF7AB6', label: 'Pages a human' }, { sourceHandle: 'r', targetHandle: 'b' }),
   ],
 }
 

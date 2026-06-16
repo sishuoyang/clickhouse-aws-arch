@@ -15,6 +15,9 @@ const handleStyle: React.CSSProperties = {
 export function ServiceNode({ data, selected }: NodeProps<ServiceNodeType>) {
   const accent = theme.category[data.category]
   const hero = !!data.hero
+  // ClickStack members (the OTel collector, ClickHouse, HyperDX) get the same yellow ring so the
+  // trio reads as one family even though they sit in different columns.
+  const clickstack = !!data.clickstack
   const svg = iconSvg(data.icon)
 
   return (
@@ -27,12 +30,14 @@ export function ServiceNode({ data, selected }: NodeProps<ServiceNodeType>) {
         background: hero
           ? 'linear-gradient(160deg, #2a2a18 0%, #1d1d12 100%)'
           : theme.panel,
-        border: `2px solid ${hero ? theme.yellow : accent}`,
+        border: `2px solid ${hero || clickstack ? theme.yellow : accent}`,
         boxShadow: hero
           ? `0 0 0 1px ${theme.yellow}33, 0 0 28px ${theme.yellow}55`
-          : selected
-            ? `0 0 0 1px ${accent}`
-            : '0 6px 18px rgba(0,0,0,0.45)',
+          : clickstack
+            ? `0 0 0 1px ${theme.yellow}33, 0 0 18px ${theme.yellow}44`
+            : selected
+              ? `0 0 0 1px ${accent}`
+              : '0 6px 18px rgba(0,0,0,0.45)',
         color: theme.text,
         display: 'flex',
         flexDirection: 'column',

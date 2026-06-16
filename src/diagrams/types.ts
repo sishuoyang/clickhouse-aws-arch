@@ -16,6 +16,8 @@ export type ServiceNodeData = {
   stats?: string[]
   /** Visually emphasize this node (used for the ClickHouse hub) */
   hero?: boolean
+  /** Mark as part of ClickStack — adds a yellow highlight ring so the OTel/ClickHouse/HyperDX trio reads as one family */
+  clickstack?: boolean
   /** Allow Record<string, unknown> compatibility for React Flow */
   [key: string]: unknown
 }
@@ -44,7 +46,9 @@ export type StageHeaderData = {
   [key: string]: unknown
 }
 
-export type ServiceNode = Node<ServiceNodeData, 'service'>
+// `type` is a string so a diagram can use specialized renderers (e.g. the animated 'dashboard'
+// and 'team' nodes in the real-time use case) alongside the default 'service' card.
+export type ServiceNode = Node<ServiceNodeData>
 export type StageNode = Node<StageHeaderData, 'stage'>
 export type FlowEdge = Edge<FlowEdgeData>
 
@@ -85,9 +89,10 @@ export function cnode(
   centerX: number,
   y: number,
   data: ServiceNodeData,
+  opts: { type?: string; w?: number } = {},
 ): ServiceNode {
-  const w = data.hero ? HERO_W : NODE_W
-  return { id, type: 'service', position: { x: centerX - w / 2, y }, data }
+  const w = opts.w ?? (data.hero ? HERO_W : NODE_W)
+  return { id, type: opts.type ?? 'service', position: { x: centerX - w / 2, y }, data }
 }
 
 /**

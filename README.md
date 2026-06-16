@@ -12,15 +12,20 @@ integrate with ClickHouse across four use cases:
 Each diagram is laid out as **SA-style stage columns** (Data Sources → Collection/Ingestion → Streaming/ETL → Realtime Data Warehouse → Visualization) with explicit Amazon service names and an explicit **ClickPipes** ingestion node.
 4. **Machine Learning / Gen AI** — LibreChat runs its *own* agent framework, calling **Amazon Bedrock foundation models** (validated by **Bedrock Guardrails**) and using **MCP tools** — the **ClickHouse MCP server** for vector search/analytics, plus Lambda actions; RAG is indexed **event-driven (S3 event → Lambda → Bedrock embeddings → ClickHouse)**, and every message is traced to **Langfuse** (stored in ClickHouse). ClickHouse is the shared vector store, analytics tool, and observability backend
 
-## Two views (dropdown in the sidebar)
+## Three views (dropdown in the sidebar)
 
-A **View** dropdown switches the whole app between two sets of four diagrams:
+A **View** dropdown switches the whole app between three sets of four diagrams:
 
 - **Use Cases** — plain-language, non-technical illustrations of the same four scenarios using
   everyday examples (an online store's live dashboard, a retail chain's combined data, keeping a
-  website healthy, an AI assistant answering from company knowledge). No AWS jargon — for explaining
+  website healthy, an AI assistant answering from company knowledge). No jargon — for explaining
   *what* ClickHouse does to non-technical audiences. (`uc-*` GIFs.)
-- **Architecture Diagrams** — the technical AWS reference architectures above (for SAs/engineers).
+- **Architecture Diagrams (AWS)** — the technical AWS reference architectures above (for SAs/engineers).
+- **Architecture (Vendor-Neutral)** — the same four architectures built from portable, open-source /
+  multi-cloud components instead of AWS services: **Apache Kafka** (vs MSK/Kinesis), **PostgreSQL /
+  MySQL / MongoDB**, **object storage** + **Iceberg**, **CDC** (Debezium/PeerDB), **OpenTelemetry /
+  Fluent Bit / Vector**, **Grafana / Superset / HyperDX**, **open LLMs** + **LangChain/LlamaIndex** +
+  **ClickHouse MCP**, and **Langfuse**. ClickHouse is the constant. (`vn-*` GIFs.)
 
 Built with **React + Vite + [React Flow](https://reactflow.dev) (`@xyflow/react`)**. Data flows
 are shown as glowing particles pulsing along the edges, driven by a single deterministic clock so
@@ -65,8 +70,18 @@ npm install
 npx playwright install chromium   # one-time: install the headless browser
 
 # Recommended: with `npm run dev` running, render the LIVE instance (reflects your dragged layout)
-npm run render                    # renders all four diagrams -> out/*.gif
+npm run render                    # renders all diagrams -> out/*.gif
 npm run render -- ml-genai        # render a single diagram by id
+```
+
+Or use the **`./render.sh`** wrapper to pick what to render — all, specific ids, or interactively:
+
+```bash
+./render.sh                       # interactive menu — pick by number(s), id(s), or "all"
+./render.sh all                   # render every diagram
+./render.sh observability         # a single diagram by id
+./render.sh real-time vn-genai    # several at once
+./render.sh --list                # list the available diagram ids
 ```
 
 The renderer **attaches to an already-running server** (`npm run dev` on :5173, or preview on
