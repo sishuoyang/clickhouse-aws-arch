@@ -23,17 +23,17 @@ export const collections: Collection[] = [
   },
   {
     id: 'architecture',
-    label: 'Architecture (AWS)',
+    label: 'AWS',
     diagrams: [realtime, warehouse, observability, mlgenai],
   },
   {
     id: 'google-cloud',
-    label: 'Architecture (Google Cloud)',
+    label: 'Google Cloud',
     diagrams: [gcpRealtime, gcpWarehouse, gcpObservability, gcpMlGenai],
   },
   {
     id: 'vendor-neutral',
-    label: 'Architecture (Vendor-Neutral)',
+    label: 'Vendor-Neutral',
     diagrams: [vnRealtime, vnWarehouse, vnObservability, vnGenai],
   },
 ]

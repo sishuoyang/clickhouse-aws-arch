@@ -17,6 +17,28 @@ export function Controls({ title }: { title: string }) {
     fontWeight: 600,
   }
 
+  const kbd: React.CSSProperties = {
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    fontSize: 10.5,
+    fontWeight: 700,
+    color: theme.text,
+    background: theme.panel,
+    border: `1px solid ${theme.panelBorder}`,
+    borderRadius: 5,
+    padding: '2px 6px',
+    lineHeight: 1,
+  }
+  const Hint = ({ keys, label }: { keys: string[]; label: string }) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+      {keys.map((k) => (
+        <kbd key={k} style={kbd}>
+          {k}
+        </kbd>
+      ))}
+      <span style={{ fontSize: 11.5, color: theme.textMuted }}>{label}</span>
+    </span>
+  )
+
   return (
     <div
       className="app-controls"
@@ -38,6 +60,24 @@ export function Controls({ title }: { title: string }) {
           Drag nodes or edge ends to arrange, then <strong>Save layout</strong> (top-right) to set the default.
         </div>
       </div>
+
+      {/* Keyboard shortcuts */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          background: theme.panel,
+          border: `1px solid ${theme.panelBorder}`,
+          borderRadius: 10,
+          padding: '7px 14px',
+        }}
+      >
+        <Hint keys={['Space']} label="Auto-play" />
+        <Hint keys={['↑', '↓']} label="Diagram" />
+        <Hint keys={['1', '–', '4']} label="View" />
+      </div>
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <button style={btn} onClick={toggle}>
           {playing ? '⏸ Pause' : '▶ Play'}

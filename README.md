@@ -1,4 +1,4 @@
-# AWS × ClickHouse Reference Architectures
+# DiagramHouse — ClickHouse Reference Architectures
 
 Animated reference-architecture diagrams showing how AWS native / first-party services
 integrate with ClickHouse across four use cases:

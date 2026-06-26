@@ -17,8 +17,10 @@ export default function App() {
   const initial = diagram && diagramById[diagram] ? diagram : defaultDiagramId
   const [activeId, setActiveId] = useState(initial)
   const [autoPlay, setAutoPlay] = useState(false)
+  // Auto-collapse by default (slim rail that expands on hover); only stays pinned-open if the user
+  // explicitly chose that (persisted as '0').
   const [collapsed, setCollapsed] = useState(
-    () => localStorage.getItem('sidebar-collapsed') === '1',
+    () => localStorage.getItem('sidebar-collapsed') !== '0',
   )
   const toggleCollapsed = () =>
     setCollapsed((v) => {
@@ -53,6 +55,52 @@ export default function App() {
     }, AUTOPLAY_INTERVAL)
     return () => clearTimeout(t)
   }, [autoPlay, activeId, capture])
+
+  // Keyboard shortcuts: Space toggles auto-play, ↑/↓ step through the 4 diagrams in the current
+  // view, and 1–4 switch the view (collection). Ignored while typing or in capture mode.
+  useEffect(() => {
+    if (capture) return
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null
+      const tag = el?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el?.isContentEditable) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+
+      if (e.code === 'Space' || e.key === ' ') {
+        e.preventDefault()
+        // blur any focused button so the same Space press doesn't also re-trigger it
+        ;(document.activeElement as HTMLElement | null)?.blur()
+        setAutoPlay((v) => !v)
+        return
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        const list = collectionOf(activeId).diagrams
+        const idx = list.findIndex((d) => d.id === activeId)
+        const next =
+          e.key === 'ArrowDown'
+            ? (idx + 1) % list.length
+            : (idx - 1 + list.length) % list.length
+        setActiveId(list[next].id)
+        return
+      }
+      // Digit 1–9 from the number row or numpad (read e.code too, since a focused React Flow node
+      // can otherwise consume the keypress).
+      let digit = ''
+      if (e.key >= '1' && e.key <= '9') digit = e.key
+      else if (/^(Digit|Numpad)[1-9]$/.test(e.code)) digit = e.code.slice(-1)
+      if (digit) {
+        const i = Number(digit) - 1
+        if (i < collections.length) {
+          e.preventDefault()
+          setActiveId(collections[i].diagrams[0].id)
+        }
+      }
+    }
+    // Capture phase so the shortcut fires before React Flow / focused elements can swallow the key.
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
+  }, [activeId, capture])
 
   return (
     <div style={{ display: 'flex', height: '100%', width: '100%' }}>
