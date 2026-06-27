@@ -34,6 +34,13 @@ if compgen -G "layouts/*.json" > /dev/null; then
   done
 fi
 
+# Bundle the rendered GIFs so the static site can serve downloads at /gifs/<id>.gif
+if compgen -G "out/*.gif" > /dev/null; then
+  echo "› Bundling rendered GIFs into dist/gifs/…"
+  mkdir -p dist/gifs
+  cp out/*.gif dist/gifs/
+fi
+
 echo "✓ Static bundle ready in dist/  ($(du -sh dist | cut -f1))"
 echo "  Preview locally:  npx vite preview   (or any static server pointed at dist/)"
 echo "  Deploy to AWS:    BUCKET=<name> ./deploy-aws.sh"

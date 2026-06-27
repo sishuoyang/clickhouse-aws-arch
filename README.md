@@ -96,28 +96,44 @@ automatically.
 
 Tune size / frame rate / loop length in [`scripts/render.config.mjs`](scripts/render.config.mjs).
 
-## Deploy as a static website (AWS S3)
+## Deploy
 
-The app is a fully static bundle (Vite, `base: './'`), so it can be hosted anywhere. Two scripts
-cover build + deploy:
+The app is a fully static bundle (Vite, `base: './'`). `build-static.sh` builds it and bundles the
+runtime extras a static host can't generate on its own:
 
 ```bash
-./build-static.sh                         # -> dist/  (npm run build:static)
-BUCKET=my-clickhouse-diagrams ./deploy-aws.sh   # upload to S3 website hosting (npm run deploy)
+./build-static.sh        # -> dist/  (app + /__layout/<id> saved layouts + /gifs/<id>.gif)
 ```
 
-- **`build-static.sh`** runs the Vite build and additionally writes each saved `layouts/<id>.json`
-  to `dist/__layout/<id>`. In dev/preview those layouts are served by a Vite middleware; a static
-  host has no middleware, so materializing them means the deployed site renders the *same*
-  fine-tuned layouts as the GIFs. Diagrams without a saved layout fall back to the built-in
-  defaults automatically.
-- **`deploy-aws.sh`** (needs the AWS CLI configured) creates the bucket if missing, enables public
-  read, turns on S3 static website hosting, and `aws s3 sync`s `dist/` with good cache headers
-  (content-hashed assets are immutable + long-cached; `index.html` and the layout JSON are
-  `no-cache`). It prints the website endpoint when done.
-  - Env: `BUCKET` (required), `REGION` (default `us-east-1`), `AWS_PROFILE` (optional),
-    `CLOUDFRONT_DISTRIBUTION_ID` (optional — invalidates the CDN after each upload).
-  - S3 website endpoints are HTTP-only; put **CloudFront** in front for HTTPS and a custom domain.
+It writes each saved `layouts/<id>.json` to `dist/__layout/<id>` (so the deployed site renders the
+*same* fine-tuned layouts as the GIFs) and copies `out/*.gif` to `dist/gifs/` (so the in-app
+**⬇ GIF** download button works). Diagrams without a saved layout fall back to built-in defaults.
+
+### Production: CloudFront + custom domain (Terraform)
+
+[`terraform/`](terraform/) provisions a **private S3 bucket + CloudFront (Origin Access Control) +
+ACM cert (DNS-validated in Route 53) + the `diagrams.housemate.click` alias**, then syncs `dist/`
+and invalidates the CDN:
+
+```bash
+aws sso login --profile sa
+./build-static.sh
+cd terraform && terraform init && terraform apply
+```
+
+Redeploys are just `./build-static.sh && terraform apply` — the content sync re-runs whenever
+`dist/` changes (hashed assets immutable; `index.html`, layouts, and GIFs revalidate). See
+[`terraform/README.md`](terraform/README.md) for variables and notes.
+
+### Quick/legacy: public S3 website (no custom domain)
+
+[`deploy-aws.sh`](deploy-aws.sh) (`npm run deploy`) creates a bucket, enables public read + S3
+website hosting, and `aws s3 sync`s `dist/` (including `/__layout` and `/gifs`). HTTP-only — fine for
+a quick share, but the Terraform path above is preferred for HTTPS + the custom domain.
+
+```bash
+BUCKET=ch-diagrams ./deploy-aws.sh        # env: BUCKET, REGION (default ap-southeast-1), AWS_PROFILE (default sa)
+```
 
 ## How the animation stays GIF-able
 

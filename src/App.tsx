@@ -119,7 +119,7 @@ export default function App() {
         />
       )}
       <main style={{ position: 'relative', flex: 1, height: '100%' }}>
-        {!capture && <Controls title={active.title} />}
+        {!capture && <Controls title={active.title} diagramId={active.id} />}
         <div style={{ position: 'absolute', inset: 0 }}>
           <DiagramCanvas diagram={active} capture={capture} />
         </div>

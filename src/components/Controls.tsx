@@ -3,7 +3,7 @@ import { useClockControls } from '../animation/useClock'
 
 const SPEEDS = [0.5, 1, 2]
 
-export function Controls({ title }: { title: string }) {
+export function Controls({ title, diagramId }: { title: string; diagramId: string }) {
   const { playing, speed, toggle, restart, setSpeed } = useClockControls()
 
   const btn: React.CSSProperties = {
@@ -79,6 +79,14 @@ export function Controls({ title }: { title: string }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <a
+          href={`/gifs/${diagramId}.gif`}
+          download={`${diagramId}.gif`}
+          title="Download this diagram as an animated GIF (for slides)"
+          style={{ ...btn, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          ⬇ GIF
+        </a>
         <button style={btn} onClick={toggle}>
           {playing ? '⏸ Pause' : '▶ Play'}
         </button>

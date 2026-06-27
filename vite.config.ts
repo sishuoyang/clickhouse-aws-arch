@@ -70,12 +70,39 @@ function layoutPersistence(): PluginOption {
   }
 }
 
+// Serves the rendered GIFs at /gifs/<id>.gif from the out/ directory during dev & preview, so the
+// in-app "Download GIF" button works locally too (on a static host the GIFs are bundled into dist/).
+function gifAssets(): PluginOption {
+  const dir = resolve(process.cwd(), 'out')
+  const handler = (req: any, res: any, next: () => void) => {
+    const id = (req.url ?? '').match(/^\/gifs\/([\w-]+)\.gif/)?.[1]
+    if (!id) return next()
+    try {
+      const buf = readFileSync(resolve(dir, `${id}.gif`))
+      res.setHeader('content-type', 'image/gif')
+      res.end(buf)
+    } catch {
+      res.statusCode = 404
+      res.end()
+    }
+  }
+  return {
+    name: 'gif-assets',
+    configureServer(server) {
+      server.middlewares.use(handler)
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(handler)
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   // Relative base so the built app works from any path — a web server, a subpath,
   // or even dist/index.html opened directly via file://.
   base: './',
-  plugins: [react(), layoutPersistence()],
+  plugins: [react(), layoutPersistence(), gifAssets()],
   server: { port: 5173, strictPort: true },
   preview: { port: 4173, strictPort: true },
 })

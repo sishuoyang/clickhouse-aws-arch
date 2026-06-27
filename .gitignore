@@ -6,3 +6,15 @@ out
 .DS_Store
 
 # Saved diagram layouts (layouts/*.json) are tracked so the arranged defaults ship with the repo.
+
+# Terraform — commit the .tf sources and .terraform.lock.hcl, ignore local state & artifacts.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+*.tfplan
+crash.log
+crash.*.log
+.terraform.tfstate.lock.info
+variables.tf
