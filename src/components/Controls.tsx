@@ -75,7 +75,7 @@ export function Controls({ title, diagramId }: { title: string; diagramId: strin
       >
         <Hint keys={['Space']} label="Auto-play" />
         <Hint keys={['↑', '↓']} label="Diagram" />
-        <Hint keys={['1', '–', '4']} label="View" />
+        <Hint keys={['1', '–', '5']} label="View" />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

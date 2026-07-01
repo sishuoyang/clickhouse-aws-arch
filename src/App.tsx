@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { DiagramCanvas } from './components/DiagramCanvas'
+import { StackDiagram } from './components/StackDiagram'
 import { Sidebar } from './components/Sidebar'
 import { Controls } from './components/Controls'
 import { diagramById, defaultDiagramId, diagrams, collections, collectionOf } from './diagrams'
@@ -121,7 +122,11 @@ export default function App() {
       <main style={{ position: 'relative', flex: 1, height: '100%' }}>
         {!capture && <Controls title={active.title} diagramId={active.id} />}
         <div style={{ position: 'absolute', inset: 0 }}>
-          <DiagramCanvas diagram={active} capture={capture} />
+          {active.kind === 'stack' ? (
+            <StackDiagram />
+          ) : (
+            <DiagramCanvas diagram={active} capture={capture} />
+          )}
         </div>
       </main>
     </div>

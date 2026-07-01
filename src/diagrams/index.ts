@@ -6,6 +6,7 @@ import { mlgenai } from './mlgenai'
 import { ucRealtime, ucWarehouse, ucObservability, ucGenai } from './usecases'
 import { vnRealtime, vnWarehouse, vnObservability, vnGenai } from './vendorneutral'
 import { gcpRealtime, gcpWarehouse, gcpObservability, gcpMlGenai } from './googlecloud'
+import { dataStack } from './datastack'
 
 export type Collection = {
   id: string
@@ -35,6 +36,11 @@ export const collections: Collection[] = [
     id: 'vendor-neutral',
     label: 'Vendor-Neutral',
     diagrams: [vnRealtime, vnWarehouse, vnObservability, vnGenai],
+  },
+  {
+    id: 'data-stack',
+    label: 'Data Stack',
+    diagrams: [dataStack],
   },
 ]
 

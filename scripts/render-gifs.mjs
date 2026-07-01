@@ -84,6 +84,20 @@ async function resolveServer() {
 // Bounding box (CSS px) of the diagram content, so we crop the black margins away.
 async function contentClip(page, pad = 24) {
   return page.evaluate((p) => {
+    // Stack views aren't React Flow — clip to the .stack-root content instead.
+    const stack = document.querySelector('.stack-root > *')
+    if (stack) {
+      const r = stack.getBoundingClientRect()
+      const x = Math.max(0, Math.floor(r.left - p))
+      const y = Math.max(0, Math.floor(r.top - p))
+      const maxX = Math.min(window.innerWidth, Math.ceil(r.right + p))
+      const maxY = Math.min(window.innerHeight, Math.ceil(r.bottom + p))
+      let w = maxX - x
+      let h = maxY - y
+      w -= w % 2
+      h -= h % 2
+      return { x, y, width: w, height: h }
+    }
     const els = document.querySelectorAll(
       '.react-flow__node, .react-flow__edge, .react-flow__edgelabel-renderer > *',
     )
@@ -117,7 +131,13 @@ async function captureDiagram(page, base, id, settings) {
   await page.goto(`${base}/?capture=1&diagram=${id}`, { waitUntil: 'networkidle' })
 
   await page.waitForFunction(() => window.__captureReady === true)
-  await page.waitForSelector('.react-flow__edge path', { state: 'attached' })
+  // Flow diagrams wait for edges; stack views (no React Flow) just wait for their root.
+  const isStack = await page.evaluate(() => !!document.querySelector('.stack-root'))
+  if (isStack) {
+    await page.waitForSelector('.stack-root', { state: 'attached' })
+  } else {
+    await page.waitForSelector('.react-flow__edge path', { state: 'attached' })
+  }
   // Let fitView + fonts + first getTotalLength settle (and the saved layout apply).
   await page.waitForTimeout(600)
 

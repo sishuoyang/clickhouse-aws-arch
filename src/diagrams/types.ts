@@ -63,6 +63,8 @@ export type DiagramDef = {
   title: string
   /** One-line description shown under the title */
   description: string
+  /** Render mode: 'flow' (default, React Flow node graph) or 'stack' (layered platform overview) */
+  kind?: 'flow' | 'stack'
   /** Column headers rendered across the top (SA-style swimlane stages) */
   stages?: StageDef[]
   nodes: ServiceNode[]

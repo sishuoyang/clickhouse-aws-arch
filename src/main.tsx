@@ -3,10 +3,14 @@ import App from './App'
 import './index.css'
 import { clock } from './animation/clock'
 import { diagrams } from './diagrams'
+import { initAnalytics } from './analytics'
 
 const params = new URLSearchParams(window.location.search)
 const capture = params.get('capture') === '1'
 if (capture) document.body.classList.add('capture')
+
+// Google Analytics (only when VITE_GA_ID is set at build time, and never during capture).
+initAnalytics(capture)
 
 // Expose the diagram list so the GIF render script has a single source of truth.
 ;(window as unknown as Record<string, unknown>).__diagrams = diagrams.map((d) => ({
